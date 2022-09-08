@@ -71,9 +71,7 @@
         const travelList = document.querySelector('ul');
         const travelEntry = document.querySelector('ul li');
         const addTrip = () => {
-            const newTrip = travelEntry.cloneNode(true);
-            travelList.append(newTrip);
-            newTrip.querySelector('input').focus();
+            travelList.appendChild(travelEntry.cloneNode(true)).querySelector('input').focus();
         }
         const removeTrip = (e) => {
             travelList.removeChild(e.target.parentNode)
