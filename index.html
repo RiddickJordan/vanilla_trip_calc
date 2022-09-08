@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Trip Reimbursement</title>
+  </head>
+  <body>
+    <main>
+        <h1>Trip Reimbursement Calculator</h1>
+        <form onsubmit="handleSubmit(event)">
+            <fieldset>
+                <legend>Travel History</legend>
+                <ul>
+                    <li>
+                        <label>
+                            Start Date
+                            <input name="start" type="date"/>
+                        </label>
+                        <label>
+                            End Date
+                            <input name="end" type="date"/>
+                        </label>
+                        <label>
+                            City Cost
+                            <select name="cost">
+                                <option selected>Low</option>
+                                <option>High</option>
+                            </select>
+                        </label>
+                    </li>
+                </ul>
+                <button id="addTrip">Add Another Trip</button>
+                <br />
+                <input type="submit" value="Calclulate Reimbursement" />
+            </fieldset>
+        </form>
+        <article>
+            <h2>Reimbursement Total</h2>
+            <span>Enter your travel history and use the 'Calculate Reimbursement' button and the total will appear here.</span>
+        </article>
+    </main>
+    <script type="text/javascript">
+        const calcReimursement = (data) => {
+            /**
+             * * First day and last day of a project, or sequence of projects, is a travel day.
+            * Any day in the middle of a project, or sequence of projects, is considered a full day.
+            * If there is a gap between projects, then the days on either side of that gap are travel days.
+            * If two projects push up against each other, or overlap, then those days are full days as well.
+            * Any given day is only ever counted once, even if two projects are on the same day.
+            * A travel day is reimbursed at a rate of 45 dollars per day in a low cost city.
+            * A travel day is reimbursed at a rate of 55 dollars per day in a high cost city.
+            * A full day is reimbursed at a rate of 75 dollars per day in a low cost city.
+            * A full day is reimbursed at a rate of 85 dollars per day in a high cost city.
+            */
+           return 'duh';
+        }
+        const handleSubmit = (e) => {
+            e.preventDefault();
+            document.querySelector('article span').innerText = calcReimursement();
+            //set the article span text to the return of our calc functio
+        }
+        const addTrip = () => {
+            //clone first child of ul and inset at the end of the ul
+        }
+    </script>
+  </body>
+</html>
