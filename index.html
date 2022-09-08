@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Trip Reimbursement</title>
+    <style>
+        ul li:first-child{
+            display:none;
+        }
+    </style>
   </head>
   <body>
     <main>
@@ -29,9 +34,10 @@
                                 <option>High</option>
                             </select>
                         </label>
+                        <button type="button" onclick="removeTrip(event)">Remove Trip</button>
                     </li>
                 </ul>
-                <button id="addTrip">Add Another Trip</button>
+                <button onclick="addTrip()" type="button">Add Another Trip</button>
                 <br />
                 <input type="submit" value="Calclulate Reimbursement" />
             </fieldset>
@@ -44,7 +50,8 @@
     <script type="text/javascript">
         const calcReimursement = (data) => {
             /**
-             * * First day and last day of a project, or sequence of projects, is a travel day.
+            * 
+            * First day and last day of a project, or sequence of projects, is a travel day.
             * Any day in the middle of a project, or sequence of projects, is considered a full day.
             * If there is a gap between projects, then the days on either side of that gap are travel days.
             * If two projects push up against each other, or overlap, then those days are full days as well.
@@ -61,9 +68,17 @@
             document.querySelector('article span').innerText = calcReimursement();
             //set the article span text to the return of our calc functio
         }
+        const travelList = document.querySelector('ul');
+        const travelEntry = document.querySelector('ul li');
         const addTrip = () => {
-            //clone first child of ul and inset at the end of the ul
+            const newTrip = travelEntry.cloneNode(true);
+            travelList.append(newTrip);
+            newTrip.querySelector('input').focus();
         }
+        const removeTrip = (e) => {
+            travelList.removeChild(e.target.parentNode)
+        }
+        addTrip();
     </script>
   </body>
 </html>
