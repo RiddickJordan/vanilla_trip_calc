@@ -5,38 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Trip Reimbursement</title>
-    <style>
-        ul li:first-child{
-            display:none;
-        }
-    </style>
   </head>
   <body>
     <main>
         <h1>Trip Reimbursement Calculator</h1>
-        <form onsubmit="handleSubmit(event)">
+         <form onsubmit="handleSubmit(event)">
             <fieldset>
                 <legend>Travel History</legend>
-                <ul>
-                    <li>
-                        <label>
-                            Start Date
-                            <input name="start" type="date"/>
-                        </label>
-                        <label>
-                            End Date
-                            <input name="end" type="date"/>
-                        </label>
-                        <label>
-                            City Cost
-                            <select name="cost">
-                                <option selected>Low</option>
-                                <option>High</option>
-                            </select>
-                        </label>
-                        <button type="button" onclick="removeTrip(event)">Remove Trip</button>
-                    </li>
-                </ul>
+                <ol></ol>
                 <button onclick="addTrip()" type="button">Add Another Trip</button>
                 <br />
                 <input type="submit" value="Calclulate Reimbursement" />
@@ -48,7 +24,13 @@
         </article>
     </main>
     <script type="text/javascript">
+        
+
         const calcReimursement = (data) => {
+            const days = new Object();
+            
+            console.log(data)
+
             /**
             * 
             * First day and last day of a project, or sequence of projects, is a travel day.
@@ -65,13 +47,44 @@
         }
         const handleSubmit = (e) => {
             e.preventDefault();
-            document.querySelector('article span').innerText = calcReimursement();
+            const formData = new FormData(e.target);
+            const formDataObj = {};
+            formData.forEach((value, key) => {
+                const tripName = key.split('_')[0];
+                const tripDetail = key.split('_')[1];
+                if(!formDataObj[tripName]){
+                    formDataObj[tripName] = {};
+                }
+                formDataObj[tripName][tripDetail] = value;
+            })
+            document.querySelector('article span').innerText = calcReimursement(formDataObj);
             //set the article span text to the return of our calc functio
         }
-        const travelList = document.querySelector('ul');
-        const travelEntry = document.querySelector('ul li');
+
+        const travelList = document.querySelector('ol');
+        let tripIndex = 0;
         const addTrip = () => {
-            travelList.appendChild(travelEntry.cloneNode(true)).querySelector('input').focus();
+            tripIndex ++;
+            const travelInputTemplate = `
+                <label>
+                    Start Date
+                    <input type="date" name="trip${tripIndex}_start"/>
+                </label>
+                <label>
+                    End Date
+                    <input type="date" name="trip${tripIndex}_end"/>
+                </label>
+                <label>
+                    City Cost
+                    <select name="trip${tripIndex}_cost">
+                        <option selected>Low</option>
+                        <option>High</option>
+                    </select>
+                </label>
+                <button type="button" onclick="removeTrip(event)">Remove Trip</button>`;
+            let li = document.createElement('li');
+            li.innerHTML = travelInputTemplate;
+            travelList.appendChild(li).querySelector('input').focus();
         }
         const removeTrip = (e) => {
             travelList.removeChild(e.target.parentNode)
