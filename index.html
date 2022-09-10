@@ -26,28 +26,53 @@
     <script type="text/javascript">
         
 
-        const calcReimursement = (data) => {
-            const days = new Object();
-            
-            console.log(data)
+        const calcReimursement = (trips) => {
+            const days = new Set();
+            const highDays = new Set();
+            let cost = 0;
 
-            /**
-            * 
-            * First day and last day of a project, or sequence of projects, is a travel day.
-            * Any day in the middle of a project, or sequence of projects, is considered a full day.
-            * If there is a gap between projects, then the days on either side of that gap are travel days.
-            * If two projects push up against each other, or overlap, then those days are full days as well.
-            * Any given day is only ever counted once, even if two projects are on the same day.
-            * A travel day is reimbursed at a rate of 45 dollars per day in a low cost city.
-            * A travel day is reimbursed at a rate of 55 dollars per day in a high cost city.
-            * A full day is reimbursed at a rate of 75 dollars per day in a low cost city.
-            * A full day is reimbursed at a rate of 85 dollars per day in a high cost city.
-            */
-           return 'duh';
+            for(trip in trips){
+                const thisTrip = trips[trip];
+                const start = new Date(thisTrip.start);
+                const end = new Date(thisTrip.end);
+
+                if(start <= end){
+                    const date = new Date(start.getTime());
+                    const dates = [];
+
+                    while (date <= end) {
+                        days.add(new Date(date).toString());
+                        if(thisTrip.cost == 'High'){
+                            highDays.add(new Date(date).toString());
+                        }
+                        date.setDate(date.getDate() + 1);
+                    }
+                }
+            }
+
+            for (const day of days) {
+                const thisDay = new Date(day);
+                const previousDay = new Date(thisDay.getTime())
+                previousDay.setDate(previousDay.getDate() - 1);
+                
+                const nextDay = new Date(thisDay.getTime())
+                nextDay.setDate(nextDay.getDate() + 1);
+
+                const dayBefore = days.has(previousDay.toString());
+                const dayAfter = days.has(nextDay.toString());
+                const highCost = highDays.has(day.toString());
+                if (!dayBefore || !dayAfter){
+                    cost += highCost ? 55 : 45;
+                } else {
+                    cost += highCost ? 85 : 75;
+                }
+            }
+           return cost;
         }
         const handleSubmit = (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
+
             const formDataObj = {};
             formData.forEach((value, key) => {
                 const tripName = key.split('_')[0];
@@ -57,8 +82,8 @@
                 }
                 formDataObj[tripName][tripDetail] = value;
             })
-            document.querySelector('article span').innerText = calcReimursement(formDataObj);
-            //set the article span text to the return of our calc functio
+            const compTotal = calcReimursement(formDataObj);
+            document.querySelector('article span').innerText = compTotal > 0 ? `Reimbursement total is ${compTotal}`: "Caclulation Error. Please confirm data entry.";
         }
 
         const travelList = document.querySelector('ol');
