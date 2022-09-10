@@ -5,38 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Trip Reimbursement</title>
-    <style>
-        ul li:first-child{
-            display:none;
-        }
-    </style>
   </head>
   <body>
     <main>
         <h1>Trip Reimbursement Calculator</h1>
-        <form onsubmit="handleSubmit(event)">
+         <form onsubmit="handleSubmit(event)">
             <fieldset>
                 <legend>Travel History</legend>
-                <ul>
-                    <li>
-                        <label>
-                            Start Date
-                            <input name="start" type="date"/>
-                        </label>
-                        <label>
-                            End Date
-                            <input name="end" type="date"/>
-                        </label>
-                        <label>
-                            City Cost
-                            <select name="cost">
-                                <option selected>Low</option>
-                                <option>High</option>
-                            </select>
-                        </label>
-                        <button type="button" onclick="removeTrip(event)">Remove Trip</button>
-                    </li>
-                </ul>
+                <ol></ol>
                 <button onclick="addTrip()" type="button">Add Another Trip</button>
                 <br />
                 <input type="submit" value="Calclulate Reimbursement" />
@@ -48,30 +24,92 @@
         </article>
     </main>
     <script type="text/javascript">
-        const calcReimursement = (data) => {
-            /**
-            * 
-            * First day and last day of a project, or sequence of projects, is a travel day.
-            * Any day in the middle of a project, or sequence of projects, is considered a full day.
-            * If there is a gap between projects, then the days on either side of that gap are travel days.
-            * If two projects push up against each other, or overlap, then those days are full days as well.
-            * Any given day is only ever counted once, even if two projects are on the same day.
-            * A travel day is reimbursed at a rate of 45 dollars per day in a low cost city.
-            * A travel day is reimbursed at a rate of 55 dollars per day in a high cost city.
-            * A full day is reimbursed at a rate of 75 dollars per day in a low cost city.
-            * A full day is reimbursed at a rate of 85 dollars per day in a high cost city.
-            */
-           return 'duh';
+        
+
+        const calcReimursement = (trips) => {
+            const days = new Set();
+            const highDays = new Set();
+            let cost = 0;
+
+            for(trip in trips){
+                const thisTrip = trips[trip];
+                const start = new Date(thisTrip.start);
+                const end = new Date(thisTrip.end);
+
+                if(start <= end){
+                    const date = new Date(start.getTime());
+                    const dates = [];
+
+                    while (date <= end) {
+                        days.add(new Date(date).toString());
+                        if(thisTrip.cost == 'High'){
+                            highDays.add(new Date(date).toString());
+                        }
+                        date.setDate(date.getDate() + 1);
+                    }
+                }
+            }
+
+            for (const day of days) {
+                const thisDay = new Date(day);
+                const previousDay = new Date(thisDay.getTime())
+                previousDay.setDate(previousDay.getDate() - 1);
+                
+                const nextDay = new Date(thisDay.getTime())
+                nextDay.setDate(nextDay.getDate() + 1);
+
+                const dayBefore = days.has(previousDay.toString());
+                const dayAfter = days.has(nextDay.toString());
+                const highCost = highDays.has(day.toString());
+                if (!dayBefore || !dayAfter){
+                    cost += highCost ? 55 : 45;
+                } else {
+                    cost += highCost ? 85 : 75;
+                }
+            }
+           return cost;
         }
         const handleSubmit = (e) => {
             e.preventDefault();
-            document.querySelector('article span').innerText = calcReimursement();
-            //set the article span text to the return of our calc functio
+            const formData = new FormData(e.target);
+
+            const formDataObj = {};
+            formData.forEach((value, key) => {
+                const tripName = key.split('_')[0];
+                const tripDetail = key.split('_')[1];
+                if(!formDataObj[tripName]){
+                    formDataObj[tripName] = {};
+                }
+                formDataObj[tripName][tripDetail] = value;
+            })
+            const compTotal = calcReimursement(formDataObj);
+            document.querySelector('article span').innerText = compTotal > 0 ? `Reimbursement total is ${compTotal}`: "Caclulation Error. Please confirm data entry.";
         }
-        const travelList = document.querySelector('ul');
-        const travelEntry = document.querySelector('ul li');
+
+        const travelList = document.querySelector('ol');
+        let tripIndex = 0;
         const addTrip = () => {
-            travelList.appendChild(travelEntry.cloneNode(true)).querySelector('input').focus();
+            tripIndex ++;
+            const travelInputTemplate = `
+                <label>
+                    Start Date
+                    <input type="date" name="trip${tripIndex}_start"/>
+                </label>
+                <label>
+                    End Date
+                    <input type="date" name="trip${tripIndex}_end"/>
+                </label>
+                <label>
+                    City Cost
+                    <select name="trip${tripIndex}_cost">
+                        <option selected>Low</option>
+                        <option>High</option>
+                    </select>
+                </label>
+                <button type="button" onclick="removeTrip(event)">Remove Trip</button>`;
+            let li = document.createElement('li');
+            li.innerHTML = travelInputTemplate;
+            travelList.appendChild(li).querySelector('input').focus();
         }
         const removeTrip = (e) => {
             travelList.removeChild(e.target.parentNode)
