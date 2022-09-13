@@ -16,6 +16,8 @@
                 <button onclick="addTrip()" type="button">Add Another Trip</button>
                 <br />
                 <input type="submit" value="Calclulate Reimbursement" />
+                <br />
+                <button onclick="clearTrips()" type="button">Clear All Trips</button>
             </fieldset>
         </form>
         <article>
@@ -107,6 +109,9 @@
             let li = document.createElement('li');
             li.innerHTML = travelInputTemplate;
             travelList.appendChild(li).querySelector('input').focus();
+        }
+        const clearTrips = () => {
+            travelList.innerHTML = "";
         }
         const removeTrip = (e) => {
             travelList.removeChild(e.target.parentNode)
