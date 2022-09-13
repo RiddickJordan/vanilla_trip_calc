@@ -42,7 +42,7 @@
 
                     while (date <= end) {
                         days.add(new Date(date).toString());
-                        if(thisTrip.cost == 'High'){
+                        if(thisTrip.cost == 'on'){
                             highDays.add(new Date(date).toString());
                         }
                         date.setDate(date.getDate() + 1);
@@ -100,11 +100,8 @@
                     <input type="date" name="trip${tripIndex}_end"/>
                 </label>
                 <label>
-                    City Cost
-                    <select name="trip${tripIndex}_cost">
-                        <option selected>Low</option>
-                        <option>High</option>
-                    </select>
+                    High Cost City? 
+                    <input type="checkbox" name="trip${tripIndex}_cost">
                 </label>
                 <button type="button" onclick="removeTrip(event)">Remove Trip</button>`;
             let li = document.createElement('li');
