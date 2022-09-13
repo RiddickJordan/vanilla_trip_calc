@@ -6,6 +6,24 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Trip Reimbursement</title>
   </head>
+  <style>
+    body{
+        background: #e8f6ef;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+    .clearAll{
+        float:right;
+    }
+    li:nth-child(even){ 
+        background: #d8ebe2; 
+    }
+    input,
+    button{
+        background: transparent;
+        padding: .25rem;
+        margin:.5rem;
+    }
+</style>
   <body>
     <main>
         <h1>Trip Reimbursement Calculator</h1>
@@ -14,10 +32,8 @@
                 <legend>Travel History</legend>
                 <ol></ol>
                 <button onclick="addTrip()" type="button">Add Another Trip</button>
-                <br />
                 <input type="submit" value="Calclulate Reimbursement" />
-                <br />
-                <button onclick="clearTrips()" type="button">Clear All Trips</button>
+                <button onclick="clearTrips()" type="button" class="clearAll">Clear All Trips</button>
             </fieldset>
         </form>
         <article>
@@ -36,7 +52,6 @@
     <script type="text/javascript">
 
         const calcReimursement = (trips) => {
-            console.log(trips);
             const days = new Set();
             const highDays = new Set();
             let cost = 0;
@@ -131,6 +146,7 @@
             for (const trip of trips){
                 addTrip(trip.start, trip.end, trip.cost)
             }
+            document.querySelector('input[type="submit"]').focus();
         }
 
         const testSet1 = [
