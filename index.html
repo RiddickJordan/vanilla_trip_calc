@@ -24,11 +24,19 @@
             <h2>Reimbursement Total</h2>
             <span>Enter your travel history and use the 'Calculate Reimbursement' button and the total will appear here.</span>
         </article>
+        <article>
+            <h2>Populate Tests</h2>
+            <span>Click on a test set button to populate the UI with sample data, confrim details, and then click 'Calculate Reimbursement' to update the total.</span>
+            <button type="button" onclick="populateTest(testSet1)">Set 1</button>
+            <button type="button" onclick="populateTest(testSet2)">Set 2</button>
+            <button type="button" onclick="populateTest(testSet3)">Set 3</button>
+            <button type="button" onclick="populateTest(testSet4)">Set 4</button>
+        </article>
     </main>
     <script type="text/javascript">
-        
 
         const calcReimursement = (trips) => {
+            console.log(trips);
             const days = new Set();
             const highDays = new Set();
             let cost = 0;
@@ -44,7 +52,7 @@
 
                     while (date <= end) {
                         days.add(new Date(date).toString());
-                        if(thisTrip.cost == 'on'){
+                        if(thisTrip.cost == 'high'){
                             highDays.add(new Date(date).toString());
                         }
                         date.setDate(date.getDate() + 1);
@@ -90,20 +98,20 @@
 
         const travelList = document.querySelector('ol');
         let tripIndex = 0;
-        const addTrip = () => {
+        const addTrip = (start, end, cost) => {
             tripIndex ++;
             const travelInputTemplate = `
                 <label>
                     Start Date
-                    <input type="date" name="trip${tripIndex}_start"/>
+                    <input type="date" name="trip${tripIndex}_start" value="${start}"/>
                 </label>
                 <label>
                     End Date
-                    <input type="date" name="trip${tripIndex}_end"/>
+                    <input type="date" name="trip${tripIndex}_end" value="${end}"/>
                 </label>
                 <label>
                     High Cost City? 
-                    <input type="checkbox" name="trip${tripIndex}_cost">
+                    <input type="checkbox" name="trip${tripIndex}_cost" value="high" ${cost == 'high' ? 'checked' : ''}>
                 </label>
                 <button type="button" onclick="removeTrip(event)">Remove Trip</button>`;
             let li = document.createElement('li');
@@ -117,6 +125,37 @@
             travelList.removeChild(e.target.parentNode)
         }
         addTrip();
+
+        const populateTest = (trips) => {
+            clearTrips();
+            for (const trip of trips){
+                addTrip(trip.start, trip.end, trip.cost)
+            }
+        }
+
+        const testSet1 = [
+            {start:"2015-09-01", end:"2015-09-03", cost:'low'}
+        ];
+
+        const testSet2 = [
+            {start:"2015-09-01", end:"2015-09-01", cost:'low'},
+            {start:"2015-09-02", end:"2015-09-06", cost:'high'},
+            {start:"2015-09-06", end:"2015-09-08", cost:'low'}
+        ];
+
+        const testSet3 = [
+            {start:"2015-09-01", end:"2015-09-03", cost:'low'},
+            {start:"2015-09-05", end:"2015-09-07", cost:'high'},
+            {start:"2015-09-08", end:"2015-09-08", cost:'high'}
+        ];
+
+        const testSet4 = [
+            {start:"2015-09-01", end:"2015-09-01", cost:'low'},
+            {start:"2015-09-01", end:"2015-09-01", cost:'low'},
+            {start:"2015-09-02", end:"2015-09-02", cost:'high'},
+            {start:"2015-09-02", end:"2015-09-03", cost:'high'}
+        ];
+
     </script>
   </body>
 </html>
